@@ -1,5 +1,15 @@
-# インストール
-uv add gradio pillow numpy
 
-# 実行
+
+# image-noise-expander
+
+![](.docs/screenshot.png)
+
+## Installation
+```bash
+uv sync
+```
+
+## Usage
+```bash
 uv run main.py
+```
