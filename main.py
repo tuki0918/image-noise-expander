@@ -16,6 +16,12 @@ def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, noise_strength=0.1, di
         noise = np.clip(noise, 0, 255).astype(np.uint8)
         new_img.paste(Image.fromarray(noise, 'RGB'), (0, h))
         cropped = new_img.crop((0, shift_h, w, shift_h + h))
+        
+        # 拡張領域のマスク作成（拡張領域=白、元画像=黒）
+        mask = Image.new('L', (w, h), color=0)
+        mask_array = np.array(mask)
+        mask_array[h-shift_h:h] = 255
+        mask = Image.fromarray(mask_array, 'L')
 
     elif direction == 'top':
         new_img = Image.new('RGB', (w, h + shift_h), color=(0, 0, 0))
@@ -24,6 +30,12 @@ def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, noise_strength=0.1, di
         noise = np.clip(noise, 0, 255).astype(np.uint8)
         new_img.paste(Image.fromarray(noise, 'RGB'), (0, 0))
         cropped = new_img.crop((0, 0, w, h))
+        
+        # 拡張領域のマスク作成（拡張領域=白、元画像=黒）
+        mask = Image.new('L', (w, h), color=0)
+        mask_array = np.array(mask)
+        mask_array[0:shift_h] = 255
+        mask = Image.fromarray(mask_array, 'L')
 
     elif direction == 'right':
         new_img = Image.new('RGB', (w + shift_w, h), color=(0, 0, 0))
@@ -32,6 +44,12 @@ def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, noise_strength=0.1, di
         noise = np.clip(noise, 0, 255).astype(np.uint8)
         new_img.paste(Image.fromarray(noise, 'RGB'), (w, 0))
         cropped = new_img.crop((shift_w, 0, shift_w + w, h))
+        
+        # 拡張領域のマスク作成（拡張領域=白、元画像=黒）
+        mask = Image.new('L', (w, h), color=0)
+        mask_array = np.array(mask)
+        mask_array[:, w-shift_w:w] = 255
+        mask = Image.fromarray(mask_array, 'L')
 
     elif direction == 'left':
         new_img = Image.new('RGB', (w + shift_w, h), color=(0, 0, 0))
@@ -40,11 +58,17 @@ def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, noise_strength=0.1, di
         noise = np.clip(noise, 0, 255).astype(np.uint8)
         new_img.paste(Image.fromarray(noise, 'RGB'), (0, 0))
         cropped = new_img.crop((0, 0, w, h))
+        
+        # 拡張領域のマスク作成（拡張領域=白、元画像=黒）
+        mask = Image.new('L', (w, h), color=0)
+        mask_array = np.array(mask)
+        mask_array[:, 0:shift_w] = 255
+        mask = Image.fromarray(mask_array, 'L')
 
     else:
         raise ValueError(f"Invalid direction: {direction}. Must be one of top, bottom, left, right.")
 
-    return cropped
+    return cropped, mask
 
 # Gradio インターフェース定義
 demo = gr.Interface(
@@ -55,9 +79,12 @@ demo = gr.Interface(
         gr.Slider(0.0, 1.0, value=0.1, label="Noise Strength"),
         gr.Radio(["top", "bottom", "left", "right"], value="bottom", label="Direction")
     ],
-    outputs=gr.Image(type="pil"),
-    title="Expand Image with Noise and Crop",
-    description="Upload an image and apply noise-based expansion and cropping in the selected direction.",
+    outputs=[
+        gr.Image(type="pil", label="Output Image"),
+        gr.Image(type="pil", label="Mask")
+    ],
+    title="Expand Image with Noise and Crop + Mask",
+    description="Upload an image and apply noise-based expansion and cropping in the selected direction. Also generates an expansion area mask for the extended regions.",
     # flagを完全に無効化
     flagging_mode="never"
 )
