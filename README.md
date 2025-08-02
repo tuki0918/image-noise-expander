@@ -11,5 +11,5 @@ uv sync
 
 ## Usage
 ```bash
-uv run main.py
+uv run app.py
 ```
