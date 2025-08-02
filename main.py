@@ -59,7 +59,7 @@ demo = gr.Interface(
     title="Expand Image with Noise and Crop",
     description="Upload an image and apply noise-based expansion and cropping in the selected direction.",
     # flagを完全に無効化
-    allow_flagging="never"
+    flagging_mode="never"
 )
 
 if __name__ == "__main__":
