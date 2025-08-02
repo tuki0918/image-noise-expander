@@ -69,23 +69,27 @@ def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, noise_strength=0.1, di
 
     return cropped, mask
 
-# Gradio Interface
-demo = gr.Interface(
-    fn=expand_with_noise_and_crop_gradio,
-    inputs=[
-        gr.Image(type="pil"),
-        gr.Slider(0.0, 0.5, value=0.3, label="Shift Percentage"),
-        gr.Slider(0.0, 1.0, value=0.1, label="Noise Strength"),
-        gr.Radio(["top", "bottom", "left", "right"], value="bottom", label="Direction")
-    ],
-    outputs=[
-        gr.Image(type="pil", label="Output Image", format="png"),
-        gr.Image(type="pil", label="Mask", format="png")
-    ],
-    title="Expand Image with Noise and Crop + Mask",
-    description="Upload an image and apply noise-based expansion and cropping in the selected direction. Also generates an expansion area mask for the extended regions.",
-    flagging_mode="never"
-)
+def create_gradio_interface():
+    demo = gr.Interface(
+        fn=expand_with_noise_and_crop_gradio,
+        inputs=[
+            gr.Image(type="pil"),
+            gr.Slider(0.0, 0.5, value=0.3, label="Shift Percentage"),
+            gr.Slider(0.0, 1.0, value=0.1, label="Noise Strength"),
+            gr.Radio(["top", "bottom", "left", "right"], value="bottom", label="Direction")
+        ],
+        outputs=[
+            gr.Image(type="pil", label="Output Image", format="png"),
+            gr.Image(type="pil", label="Mask", format="png")
+        ],
+        title="Expand Image with Noise and Crop + Mask",
+        description="Upload an image and apply noise-based expansion and cropping in the selected direction. Also generates an expansion area mask for the extended regions.",
+        flagging_mode="never"
+    )
+    
+    return demo
+
 
 if __name__ == "__main__":
+    demo = create_gradio_interface()
     demo.launch()
