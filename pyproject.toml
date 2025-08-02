@@ -1,0 +1,10 @@
+[project]
+name = "image-noise-expander"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "gradio>=5.39.0",
+    "numpy>=2.3.2",
+    "pillow>=11.3.0",
+]
