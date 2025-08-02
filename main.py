@@ -1,7 +1,6 @@
 import numpy as np
 from PIL import Image
 import gradio as gr
-import io
 
 def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, noise_strength=0.1, direction='bottom'):
     img = img.convert('RGB')
@@ -70,7 +69,7 @@ def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, noise_strength=0.1, di
 
     return cropped, mask
 
-# Gradio インターフェース定義
+# Gradio Interface
 demo = gr.Interface(
     fn=expand_with_noise_and_crop_gradio,
     inputs=[
@@ -85,7 +84,6 @@ demo = gr.Interface(
     ],
     title="Expand Image with Noise and Crop + Mask",
     description="Upload an image and apply noise-based expansion and cropping in the selected direction. Also generates an expansion area mask for the extended regions.",
-    # flagを完全に無効化
     flagging_mode="never"
 )
 
