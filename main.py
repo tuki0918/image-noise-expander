@@ -80,8 +80,8 @@ demo = gr.Interface(
         gr.Radio(["top", "bottom", "left", "right"], value="bottom", label="Direction")
     ],
     outputs=[
-        gr.Image(type="pil", label="Output Image"),
-        gr.Image(type="pil", label="Mask")
+        gr.Image(type="pil", label="Output Image", format="png"),
+        gr.Image(type="pil", label="Mask", format="png")
     ],
     title="Expand Image with Noise and Crop + Mask",
     description="Upload an image and apply noise-based expansion and cropping in the selected direction. Also generates an expansion area mask for the extended regions.",
