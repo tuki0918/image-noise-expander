@@ -2,11 +2,12 @@ import numpy as np
 from PIL import Image
 import gradio as gr
 
-def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, noise_strength=0.1, direction='bottom'):
+def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, direction='bottom'):
     img = img.convert('RGB')
     w, h = img.size
     shift_w = int(w * shift_pct)
     shift_h = int(h * shift_pct)
+    noise_strength = 0.1
 
     if direction == 'bottom':
         new_img = Image.new('RGB', (w, h + shift_h), color=(0, 0, 0))
@@ -75,7 +76,6 @@ def create_gradio_interface():
         inputs=[
             gr.Image(type="pil"),
             gr.Slider(0.0, 0.5, value=0.3, label="Shift Percentage"),
-            gr.Slider(0.0, 1.0, value=0.1, label="Noise Strength"),
             gr.Radio(["top", "bottom", "left", "right"], value="bottom", label="Direction")
         ],
         outputs=[
