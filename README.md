@@ -16,6 +16,10 @@ uv run app.py
 
 ## Results
 
+| Input |
+|:---------------:|
+| ![](.docs/input_cat.jpg) |
+
 ### Outside Mode
 
 | TOP | BOTTOM | LEFT | RIGHT |
