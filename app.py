@@ -2,12 +2,65 @@ import numpy as np
 from PIL import Image
 import gradio as gr
 
-def expand_with_noise_and_crop_gradio(img, shift_pct=0.3, direction='bottom'):
+def expand_with_noise_and_crop_gradio(img, mode='outside', shift_pct=0.3, direction='bottom'):
     img = img.convert('RGB')
     w, h = img.size
     shift_w = int(w * shift_pct)
     shift_h = int(h * shift_pct)
     noise_strength = 0.1
+
+    if mode == 'inside':
+        # 画像を内側に処理する場合
+        img_array = np.array(img)
+        
+        if direction == 'bottom':
+            noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(shift_h, w, 3))
+            noise = np.clip(noise, 0, 255).astype(np.uint8)
+            img_array[h-shift_h:h] = noise
+            
+            # 内側処理領域のマスク作成（処理領域=白、元画像=黒）
+            mask = Image.new('L', (w, h), color=0)
+            mask_array = np.array(mask)
+            mask_array[h-shift_h:h] = 255
+            mask = Image.fromarray(mask_array, 'L')
+            
+        elif direction == 'top':
+            noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(shift_h, w, 3))
+            noise = np.clip(noise, 0, 255).astype(np.uint8)
+            img_array[0:shift_h] = noise
+            
+            # 内側処理領域のマスク作成（処理領域=白、元画像=黒）
+            mask = Image.new('L', (w, h), color=0)
+            mask_array = np.array(mask)
+            mask_array[0:shift_h] = 255
+            mask = Image.fromarray(mask_array, 'L')
+            
+        elif direction == 'right':
+            noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(h, shift_w, 3))
+            noise = np.clip(noise, 0, 255).astype(np.uint8)
+            img_array[:, w-shift_w:w] = noise
+            
+            # 内側処理領域のマスク作成（処理領域=白、元画像=黒）
+            mask = Image.new('L', (w, h), color=0)
+            mask_array = np.array(mask)
+            mask_array[:, w-shift_w:w] = 255
+            mask = Image.fromarray(mask_array, 'L')
+            
+        elif direction == 'left':
+            noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(h, shift_w, 3))
+            noise = np.clip(noise, 0, 255).astype(np.uint8)
+            img_array[:, 0:shift_w] = noise
+            
+            # 内側処理領域のマスク作成（処理領域=白、元画像=黒）
+            mask = Image.new('L', (w, h), color=0)
+            mask_array = np.array(mask)
+            mask_array[:, 0:shift_w] = 255
+            mask = Image.fromarray(mask_array, 'L')
+            
+        else:
+            raise ValueError(f"Invalid direction: {direction}. Must be one of top, bottom, left, right.")
+            
+        return Image.fromarray(img_array, 'RGB'), mask
 
     if direction == 'bottom':
         new_img = Image.new('RGB', (w, h + shift_h), color=(0, 0, 0))
@@ -75,6 +128,7 @@ def create_gradio_interface():
         fn=expand_with_noise_and_crop_gradio,
         inputs=[
             gr.Image(type="pil"),
+            gr.Radio(["outside", "inside"], value="outside", label="Mode"),
             gr.Slider(0.0, 0.5, value=0.3, label="Shift Percentage"),
             gr.Radio(["top", "bottom", "left", "right"], value="bottom", label="Direction")
         ],
