@@ -23,7 +23,7 @@ def expand_with_noise_and_crop_gradio(img, mode='outside', shift_pct=30, directi
             mask = Image.new('L', (w, h), color=0)
             mask_array = np.array(mask)
             mask_array[h-shift_h:h] = 255
-            mask = Image.fromarray(mask_array, 'L')
+            mask = Image.fromarray(mask_array)
             
         elif direction == 'top':
             noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(shift_h, w, 3))
@@ -34,7 +34,7 @@ def expand_with_noise_and_crop_gradio(img, mode='outside', shift_pct=30, directi
             mask = Image.new('L', (w, h), color=0)
             mask_array = np.array(mask)
             mask_array[0:shift_h] = 255
-            mask = Image.fromarray(mask_array, 'L')
+            mask = Image.fromarray(mask_array)
             
         elif direction == 'right':
             noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(h, shift_w, 3))
@@ -45,7 +45,7 @@ def expand_with_noise_and_crop_gradio(img, mode='outside', shift_pct=30, directi
             mask = Image.new('L', (w, h), color=0)
             mask_array = np.array(mask)
             mask_array[:, w-shift_w:w] = 255
-            mask = Image.fromarray(mask_array, 'L')
+            mask = Image.fromarray(mask_array)
             
         elif direction == 'left':
             noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(h, shift_w, 3))
@@ -56,68 +56,68 @@ def expand_with_noise_and_crop_gradio(img, mode='outside', shift_pct=30, directi
             mask = Image.new('L', (w, h), color=0)
             mask_array = np.array(mask)
             mask_array[:, 0:shift_w] = 255
-            mask = Image.fromarray(mask_array, 'L')
+            mask = Image.fromarray(mask_array)
             
         else:
             raise ValueError(f"Invalid direction: {direction}. Must be one of top, bottom, left, right.")
             
-        return Image.fromarray(img_array, 'RGB'), mask
+        return Image.fromarray(img_array), mask
 
     if direction == 'bottom':
         new_img = Image.new('RGB', (w, h + shift_h), color=(0, 0, 0))
         new_img.paste(img, (0, 0))
         noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(shift_h, w, 3))
         noise = np.clip(noise, 0, 255).astype(np.uint8)
-        new_img.paste(Image.fromarray(noise, 'RGB'), (0, h))
+        new_img.paste(Image.fromarray(noise), (0, h))
         cropped = new_img.crop((0, shift_h, w, shift_h + h))
         
         # 拡張領域のマスク作成（拡張領域=白、元画像=黒）
         mask = Image.new('L', (w, h), color=0)
         mask_array = np.array(mask)
         mask_array[h-shift_h:h] = 255
-        mask = Image.fromarray(mask_array, 'L')
+        mask = Image.fromarray(mask_array)
 
     elif direction == 'top':
         new_img = Image.new('RGB', (w, h + shift_h), color=(0, 0, 0))
         new_img.paste(img, (0, shift_h))
         noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(shift_h, w, 3))
         noise = np.clip(noise, 0, 255).astype(np.uint8)
-        new_img.paste(Image.fromarray(noise, 'RGB'), (0, 0))
+        new_img.paste(Image.fromarray(noise), (0, 0))
         cropped = new_img.crop((0, 0, w, h))
         
         # 拡張領域のマスク作成（拡張領域=白、元画像=黒）
         mask = Image.new('L', (w, h), color=0)
         mask_array = np.array(mask)
         mask_array[0:shift_h] = 255
-        mask = Image.fromarray(mask_array, 'L')
+        mask = Image.fromarray(mask_array)
 
     elif direction == 'right':
         new_img = Image.new('RGB', (w + shift_w, h), color=(0, 0, 0))
         new_img.paste(img, (0, 0))
         noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(h, shift_w, 3))
         noise = np.clip(noise, 0, 255).astype(np.uint8)
-        new_img.paste(Image.fromarray(noise, 'RGB'), (w, 0))
+        new_img.paste(Image.fromarray(noise), (w, 0))
         cropped = new_img.crop((shift_w, 0, shift_w + w, h))
         
         # 拡張領域のマスク作成（拡張領域=白、元画像=黒）
         mask = Image.new('L', (w, h), color=0)
         mask_array = np.array(mask)
         mask_array[:, w-shift_w:w] = 255
-        mask = Image.fromarray(mask_array, 'L')
+        mask = Image.fromarray(mask_array)
 
     elif direction == 'left':
         new_img = Image.new('RGB', (w + shift_w, h), color=(0, 0, 0))
         new_img.paste(img, (shift_w, 0))
         noise = np.random.normal(loc=127, scale=255 * noise_strength, size=(h, shift_w, 3))
         noise = np.clip(noise, 0, 255).astype(np.uint8)
-        new_img.paste(Image.fromarray(noise, 'RGB'), (0, 0))
+        new_img.paste(Image.fromarray(noise), (0, 0))
         cropped = new_img.crop((0, 0, w, h))
         
         # 拡張領域のマスク作成（拡張領域=白、元画像=黒）
         mask = Image.new('L', (w, h), color=0)
         mask_array = np.array(mask)
         mask_array[:, 0:shift_w] = 255
-        mask = Image.fromarray(mask_array, 'L')
+        mask = Image.fromarray(mask_array)
 
     else:
         raise ValueError(f"Invalid direction: {direction}. Must be one of top, bottom, left, right.")
