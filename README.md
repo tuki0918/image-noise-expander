@@ -33,3 +33,7 @@ uv run app.py
 |:---------------:|:---------------:|:---------------:|:----------------:|
 |![](.docs/output_in_top.png) | ![](.docs/output_in_bottom.png) | ![](.docs/output_in_left.png) | ![](.docs/output_in_right.png) |
 |![](.docs/output_in_top_mask.png) | ![](.docs/output_in_bottom_mask.png) | ![](.docs/output_in_left_mask.png) | ![](.docs/output_in_right_mask.png) |
+
+## ComfyUI Custom Node
+
+https://github.com/tuki0918/comfyui-image-expand-nodes
